@@ -4,11 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.IO;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace FormWithUpload
 {
     public partial class WebForm1 : System.Web.UI.Page
     {
+        SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["con"].ConnectionString);
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -16,6 +20,7 @@ namespace FormWithUpload
 
         protected void btnUpload_Click(object sender, EventArgs e)
         {
+            String filePath = "";
 
             if (FileUpload1.HasFile)
             {
@@ -34,7 +39,11 @@ namespace FormWithUpload
                         lblMessage.Text = "Maximum file size (2MB) exceeded";
                         lblMessage.ForeColor = System.Drawing.Color.Red;
                     }
-                    FileUpload1.SaveAs(Server.MapPath("~/Uploads/" + FileUpload1.FileName));
+                    //FileUpload1.SaveAs(Server.MapPath("~/Uploads/" + FileUpload1.FileName));
+                     filePath = Server.MapPath("~/Uploads/" + FileUpload1.FileName);
+                    FileUpload1.SaveAs(filePath);
+                   
+                    //Directory.GetFiles(Server.MapPath("~/Uploads/" + FileUpload1.FileName));
                     lblMessage.Text = "file uploaded";
                     lblMessage.ForeColor = System.Drawing.Color.Green;
                 }
@@ -44,6 +53,24 @@ namespace FormWithUpload
             {
                 lblMessage.Text = "Please file upload";
                 lblMessage.ForeColor = System.Drawing.Color.Red;
+            }
+
+            try
+            {
+
+                String qry = "insert into dataform(link_1) values(@FileUpload1)";
+                con.Open();
+                SqlCommand cmd = new SqlCommand(qry, con);
+
+
+
+                cmd.Parameters.AddWithValue("@FileUpload1", filePath);
+            }
+            catch (Exception ex)
+            {
+
+
+                Response.Write("<script>alert('" + ex.Message + "')</script>");
             }
            
 
