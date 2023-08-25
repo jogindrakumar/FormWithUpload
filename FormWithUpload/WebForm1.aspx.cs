@@ -57,8 +57,9 @@ namespace FormWithUpload
 
             try
             {
+              
 
-                String qry = "insert into dataform(link_1) values(@FileUpload1)";
+                String qry = "insert into Table_1(link) values(@FileUpload1)";
                 con.Open();
                 SqlCommand cmd = new SqlCommand(qry, con);
 
