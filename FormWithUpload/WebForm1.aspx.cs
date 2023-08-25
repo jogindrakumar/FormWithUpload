@@ -19,9 +19,26 @@ namespace FormWithUpload
 
             if (FileUpload1.HasFile)
             {
-                FileUpload1.SaveAs(Server.MapPath("~/Uploads/" + FileUpload1.FileName));
-                lblMessage.Text = "file uploaded";
-                lblMessage.ForeColor = System.Drawing.Color.Green;
+
+                string fileExtension = System.IO.Path.GetExtension(FileUpload1.FileName);
+                if(fileExtension.ToLower() != ".doc" && fileExtension.ToLower() != ".docx" && fileExtension.ToLower() != ".pdf")
+                {
+                    lblMessage.Text = "File only with .doc or .docx or .pdf format are allowed";
+                    lblMessage.ForeColor = System.Drawing.Color.Red;
+                }
+                else
+                {
+                    int fileSize = FileUpload1.PostedFile.ContentLength;
+                    if(fileSize  > 2097152)
+                    {
+                        lblMessage.Text = "Maximum file size (2MB) exceeded";
+                        lblMessage.ForeColor = System.Drawing.Color.Red;
+                    }
+                    FileUpload1.SaveAs(Server.MapPath("~/Uploads/" + FileUpload1.FileName));
+                    lblMessage.Text = "file uploaded";
+                    lblMessage.ForeColor = System.Drawing.Color.Green;
+                }
+                
             }
             else
             {
